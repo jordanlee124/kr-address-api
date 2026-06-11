@@ -1,0 +1,82 @@
+---
+title: Get API Key
+api: POST /signup
+description: Create a free API key
+---
+
+Register your email to receive a free API key instantly. No credit card required.
+
+The key is returned **once** — store it somewhere safe. If you lose it, contact support.
+
+<ParamField body="email" type="string" required>
+  Your email address. Used to identify your account and manage your plan.
+</ParamField>
+
+<ResponseField name="apiKey" type="string">
+  Your API key. Store this — it will not be shown again.
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  The email address registered to this key.
+</ResponseField>
+
+<ResponseField name="plan" type="string">
+  Your current plan. Starts at `free`.
+</ResponseField>
+
+<ResponseField name="dailyLimit" type="integer">
+  Number of API calls allowed per day on your current plan.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Reminder to store your key.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X POST https://kr-address-api.jordanlee124.workers.dev/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email": "you@example.com"}'
+```
+
+```javascript JavaScript
+const res = await fetch('https://kr-address-api.jordanlee124.workers.dev/signup', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: 'you@example.com' }),
+})
+const { apiKey } = await res.json()
+console.log(apiKey) // save this!
+```
+
+```python Python
+import requests
+
+r = requests.post(
+    'https://kr-address-api.jordanlee124.workers.dev/signup',
+    json={'email': 'you@example.com'}
+)
+api_key = r.json()['apiKey']
+print(api_key)  # save this!
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201
+{
+  "apiKey": "4dd97838474e4e5cb7150e106012d00c",
+  "email": "you@example.com",
+  "plan": "free",
+  "dailyLimit": 200,
+  "message": "Store this key — it will not be shown again."
+}
+```
+
+```json 400
+{ "error": "A valid email address is required." }
+```
+
+```json 409
+{ "error": "An API key already exists for this email. Contact support if you need to retrieve it." }
+```
+</ResponseExample>

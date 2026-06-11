@@ -18,7 +18,15 @@ curl "https://kr-address-api.jordanlee124.workers.dev/v1/normalize?q=...&api_key
 
 ## Get an API key
 
-[Get a free API key](https://buy.polar.sh/jordanlee124) — no credit card required for the free tier.
+Call `POST /signup` with your email to get a free key instantly — no credit card required:
+
+```bash
+curl -X POST https://kr-address-api.jordanlee124.workers.dev/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email": "you@example.com"}'
+```
+
+To upgrade to a paid plan, visit [polar.sh](https://buy.polar.sh/jordanlee124) — your existing key is upgraded automatically, no rotation needed.
 
 ## Rate limits
 

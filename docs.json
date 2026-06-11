@@ -35,6 +35,7 @@
       {
         "group": "API Reference",
         "pages": [
+          "docs/api-reference/signup",
           "docs/api-reference/normalize",
           "docs/api-reference/search"
         ]
