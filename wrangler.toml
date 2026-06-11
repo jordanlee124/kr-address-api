@@ -1,0 +1,23 @@
+name = "kr-address-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+ENVIRONMENT = "production"
+
+[[kv_namespaces]]
+binding = "CACHE_KV"
+id = "YOUR_CACHE_KV_ID"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "YOUR_RATE_LIMIT_KV_ID"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kr-address-api"
+database_id = "YOUR_D1_DATABASE_ID"
+
+# Secrets (set via wrangler secret put):
+# JUSO_CONFIRM_KEY
+# POLAR_WEBHOOK_SECRET
