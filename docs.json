@@ -22,23 +22,25 @@
     "name": "Dashboard",
     "url": "https://buy.polar.sh/jordanlee124"
   },
-  "navigation": [
-    {
-      "group": "Getting Started",
-      "pages": [
-        "docs/introduction",
-        "docs/quickstart",
-        "docs/authentication"
-      ]
-    },
-    {
-      "group": "API Reference",
-      "pages": [
-        "docs/api-reference/normalize",
-        "docs/api-reference/search"
-      ]
-    }
-  ],
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "docs/introduction",
+          "docs/quickstart",
+          "docs/authentication"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "docs/api-reference/normalize",
+          "docs/api-reference/search"
+        ]
+      }
+    ]
+  },
   "api": {
     "baseUrl": "https://kr-address-api.jordanlee124.workers.dev/v1",
     "auth": {
