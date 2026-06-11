@@ -4,6 +4,8 @@ import { authMiddleware } from './middleware/auth'
 import { rateLimitMiddleware } from './middleware/rateLimit'
 import { normalizeHandler } from './handlers/normalize'
 import { searchHandler } from './handlers/search'
+import { signupHandler } from './handlers/signup'
+import { insertApiKey } from './middleware/auth'
 
 export type Env = {
   JUSO_CONFIRM_KEY: string
@@ -21,6 +23,7 @@ app.use('/v1/*', rateLimitMiddleware)
 
 app.get('/v1/normalize', normalizeHandler)
 app.get('/v1/search', searchHandler)
+app.post('/signup', signupHandler)
 app.get('/health', (c) => c.json({ status: 'ok', timestamp: new Date().toISOString() }))
 
 app.post('/webhooks/polar', async (c) => {
@@ -58,9 +61,19 @@ app.post('/webhooks/polar', async (c) => {
     ).bind(event.data.product_id).first<{ id: string }>()
 
     if (plan && event.data.customer?.email) {
-      await c.env.DB.prepare(
-        'UPDATE api_keys SET plan_id = ?, polar_subscription_id = ? WHERE owner_email = ?'
-      ).bind(plan.id, event.data.subscription_id ?? null, event.data.customer.email).run()
+      const email = event.data.customer.email
+      const existing = await c.env.DB.prepare(
+        'SELECT id FROM api_keys WHERE owner_email = ?'
+      ).bind(email).first<{ id: string }>()
+
+      if (existing) {
+        await c.env.DB.prepare(
+          'UPDATE api_keys SET plan_id = ?, polar_subscription_id = ? WHERE owner_email = ?'
+        ).bind(plan.id, event.data.subscription_id ?? null, email).run()
+      } else {
+        // New paid subscriber — create key directly on the paid plan
+        await insertApiKey(c.env.DB, email, plan.id, event.data.subscription_id)
+      }
     }
   }
 

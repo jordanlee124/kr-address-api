@@ -49,7 +49,12 @@ export const authMiddleware: MiddlewareHandler<{ Bindings: Env }> = async (c, ne
   return next()
 }
 
-export async function insertApiKey(db: D1Database, email: string): Promise<string> {
+export async function insertApiKey(
+  db: D1Database,
+  email: string,
+  planId = 'free',
+  subscriptionId?: string
+): Promise<string> {
   const rawKey = crypto.randomUUID().replace(/-/g, '')
   const encoder = new TextEncoder()
   const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(rawKey))
@@ -58,10 +63,8 @@ export async function insertApiKey(db: D1Database, email: string): Promise<strin
     .join('')
 
   await db.prepare(
-    'INSERT INTO api_keys (key_hash, owner_email) VALUES (?, ?)'
-  )
-    .bind(keyHash, email)
-    .run()
+    'INSERT INTO api_keys (key_hash, owner_email, plan_id, polar_subscription_id) VALUES (?, ?, ?, ?)'
+  ).bind(keyHash, email, planId, subscriptionId ?? null).run()
 
   return rawKey
 }
