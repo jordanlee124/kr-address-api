@@ -1,0 +1,60 @@
+---
+title: Introduction
+description: Normalize any Korean address to structured JSON with English romanization
+---
+
+## What is this API?
+
+The Korean Address Normalizer API converts any Korean address string into structured JSON containing both the original Korean address and an official English romanization — powered by the Korean government's free [Juso database](https://business.juso.go.kr) (주소기반산업지원서비스).
+
+## The Korean address system
+
+Korea uses **two parallel address systems**:
+
+| System | Korean | Example |
+|--------|--------|---------|
+| Road address | 도로명주소 | 서울특별시 강남구 테헤란로 427 |
+| Land lot address | 지번주소 | 서울특별시 강남구 삼성동 143-40 |
+
+The road address system (도로명주소) was introduced in 2014 and is now the official standard. The land lot system (지번주소) is still widely used and appears on older documents, maps, and delivery forms. This API returns **both formats** in every response.
+
+## English romanization
+
+Korea uses the [Revised Romanization of Korean](https://en.wikipedia.org/wiki/Revised_Romanization_of_Korean) as the official standard. The English address in every response (`englishAddress`) comes directly from the Korean government's official Juso database — it is not machine-translated or guessed.
+
+**Example:**
+
+```json
+{
+  "roadAddress": "서울특별시 강남구 테헤란로 427 (삼성동)",
+  "jibunAddress": "서울특별시 강남구 삼성동 143-40 위워크타워",
+  "englishAddress": "427 Teheran-ro, Gangnam-gu, Seoul",
+  "postalCode": "06159",
+  "components": {
+    "city": "서울특별시",
+    "cityEnglish": "Seoul",
+    "district": "강남구",
+    "neighbourhood": "삼성동",
+    "roadName": "테헤란로",
+    "buildingNumber": "427",
+    "buildingName": "위워크타워"
+  }
+}
+```
+
+## Use cases
+
+- **E-commerce** — normalize customer-entered Korean addresses at checkout for shipping label generation
+- **Logistics** — standardize address data across carrier systems that require English
+- **HR platforms** — handle Korean office addresses for global companies with Korean operations
+- **Remittance & fintech** — verify and structure Korean addresses for KYC/AML compliance
+- **Maps & geocoding** — convert unstructured Korean address strings before passing to a geocoder
+
+## Rate limits
+
+| Plan | Calls/day | Price |
+|------|-----------|-------|
+| Free | 200 | $0 |
+| Starter | 2,000 | $19/mo |
+| Pro | 10,000 | $49/mo |
+| Business | 100,000 | $149/mo |

@@ -1,0 +1,37 @@
+---
+title: Authentication
+description: How to authenticate requests to the API
+---
+
+All `/v1/*` endpoints require an API key. Pass it in the `X-API-Key` header:
+
+```bash
+curl https://kr-address-api.jordanlee124.workers.dev/v1/normalize?q=... \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+Alternatively, pass it as a query parameter (less preferred — avoid in server-side code where logs may capture URLs):
+
+```bash
+curl "https://kr-address-api.jordanlee124.workers.dev/v1/normalize?q=...&api_key=YOUR_API_KEY"
+```
+
+## Get an API key
+
+[Get a free API key](https://buy.polar.sh/jordanlee124) — no credit card required for the free tier.
+
+## Rate limits
+
+Every response includes rate limit headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Your plan's daily limit |
+| `X-RateLimit-Remaining` | Calls remaining today |
+| `X-RateLimit-Reset` | Unix timestamp when the counter resets (UTC midnight) |
+
+When you exceed your limit, the API returns `429 Too Many Requests`. Counters reset at UTC midnight.
+
+## Upgrading your plan
+
+[Upgrade on Polar](https://buy.polar.sh/jordanlee124). Your API key is automatically upgraded — no key rotation needed.

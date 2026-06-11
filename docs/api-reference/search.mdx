@@ -1,0 +1,78 @@
+---
+title: Search Addresses
+api: GET /search
+description: Returns multiple matching addresses for a query
+---
+
+Use this endpoint to show users a list of address suggestions (e.g. an autocomplete dropdown). Results are cached for 1 hour.
+
+<ParamField query="q" type="string" required>
+  Korean address search query.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="5">
+  Maximum number of results to return. Range: 1–10.
+</ParamField>
+
+<ResponseField name="query" type="string">
+  The original query string.
+</ResponseField>
+
+<ResponseField name="count" type="integer">
+  Number of results returned.
+</ResponseField>
+
+<ResponseField name="results" type="array">
+  Array of `AddressResult` objects. See [Normalize](/docs/api-reference/normalize) for the full schema.
+</ResponseField>
+
+<ResponseField name="cached" type="boolean">
+  `true` if served from cache.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl "https://kr-address-api.jordanlee124.workers.dev/v1/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC+%ED%85%8C%ED%97%A4%EB%9E%80%EB%A1%9C&limit=3" \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+```javascript JavaScript
+const r = await fetch(
+  'https://kr-address-api.jordanlee124.workers.dev/v1/search?q=' +
+  encodeURIComponent('강남구 테헤란로') + '&limit=3',
+  { headers: { 'X-API-Key': 'YOUR_API_KEY' } }
+)
+const { results } = await r.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "query": "강남구 테헤란로",
+  "count": 3,
+  "results": [
+    {
+      "roadAddress": "서울특별시 강남구 테헤란로 427 (삼성동)",
+      "jibunAddress": "서울특별시 강남구 삼성동 143-40 위워크타워",
+      "englishAddress": "427 Teheran-ro, Gangnam-gu, Seoul",
+      "postalCode": "06159",
+      "components": {
+        "city": "서울특별시",
+        "cityEnglish": "Seoul",
+        "district": "강남구",
+        "neighbourhood": "삼성동",
+        "roadName": "테헤란로",
+        "buildingNumber": "427",
+        "buildingName": "위워크타워"
+      }
+    }
+  ],
+  "cached": false
+}
+```
+
+```json 400
+{ "error": "Missing query parameter: q" }
+```
+</ResponseExample>

@@ -1,0 +1,50 @@
+{
+  "name": "Korean Address API",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#0052CC",
+    "light": "#4C9AFF",
+    "dark": "#0035B3"
+  },
+  "topbarLinks": [
+    {
+      "name": "Get API Key",
+      "url": "https://buy.polar.sh/jordanlee124"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://buy.polar.sh/jordanlee124"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "docs/introduction",
+        "docs/quickstart",
+        "docs/authentication"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "docs/api-reference/normalize",
+        "docs/api-reference/search"
+      ]
+    }
+  ],
+  "api": {
+    "baseUrl": "https://kr-address-api.jordanlee124.workers.dev/v1",
+    "auth": {
+      "method": "key",
+      "name": "X-API-Key"
+    }
+  },
+  "footerSocials": {
+    "github": "https://github.com/jordanlee124/kr-address-api"
+  }
+}

@@ -1,0 +1,217 @@
+openapi: 3.0.0
+info:
+  title: Korean Address Normalizer API
+  version: 1.0.0
+  description: Normalize any Korean address string to structured JSON with English romanization. Powered by the official Korean government Juso database.
+servers:
+  - url: https://kr-address-api.jordanlee124.workers.dev/v1
+paths:
+  /normalize:
+    get:
+      operationId: normalizeAddress
+      summary: Normalize a Korean address
+      description: Takes any Korean address string and returns the best-matching structured result in both Korean and English. Results are cached for 24 hours.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Korean address string (minimum 3 characters)
+          schema:
+            type: string
+            example: 서울특별시 강남구 테헤란로 427
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Address found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NormalizeResponse'
+              example:
+                query: 서울 강남구 테헤란로 427
+                result:
+                  roadAddress: 서울특별시 강남구 테헤란로 427 (삼성동)
+                  jibunAddress: 서울특별시 강남구 삼성동 143-40 위워크타워
+                  englishAddress: 427 Teheran-ro, Gangnam-gu, Seoul
+                  postalCode: "06159"
+                  components:
+                    city: 서울특별시
+                    cityEnglish: Seoul
+                    district: 강남구
+                    neighbourhood: 삼성동
+                    roadName: 테헤란로
+                    buildingNumber: "427"
+                    buildingName: 위워크타워
+                cached: false
+        '400':
+          description: Missing or invalid query parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Daily rate limit exceeded
+          headers:
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /search:
+    get:
+      operationId: searchAddress
+      summary: Search Korean addresses
+      description: Returns multiple matching addresses for a query. Useful when you want to present options to a user. Results are cached for 1 hour.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Korean address search query
+          schema:
+            type: string
+            example: 강남구 테헤란로
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of results (1–10, default 5)
+          schema:
+            type: integer
+            default: 5
+            minimum: 1
+            maximum: 10
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: Missing query parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Daily rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    AddressComponents:
+      type: object
+      properties:
+        city:
+          type: string
+          description: Korean city/province name
+          example: 서울특별시
+        cityEnglish:
+          type: string
+          description: English city/province name
+          example: Seoul
+        district:
+          type: string
+          description: District (구/군)
+          example: 강남구
+        neighbourhood:
+          type: string
+          description: Neighbourhood (동/읍/면)
+          example: 삼성동
+        roadName:
+          type: string
+          description: Road name
+          example: 테헤란로
+        buildingNumber:
+          type: string
+          description: Building number (main or main-sub)
+          example: "427"
+        buildingName:
+          type: string
+          nullable: true
+          description: Building name, null if not applicable
+          example: 위워크타워
+    AddressResult:
+      type: object
+      properties:
+        roadAddress:
+          type: string
+          description: Full road address (도로명주소)
+          example: 서울특별시 강남구 테헤란로 427 (삼성동)
+        jibunAddress:
+          type: string
+          description: Land lot address (지번주소)
+          example: 서울특별시 강남구 삼성동 143-40
+        englishAddress:
+          type: string
+          description: Official English romanized address
+          example: 427 Teheran-ro, Gangnam-gu, Seoul
+        postalCode:
+          type: string
+          description: 5-digit postal code
+          example: "06159"
+        components:
+          $ref: '#/components/schemas/AddressComponents'
+    NormalizeResponse:
+      type: object
+      properties:
+        query:
+          type: string
+        result:
+          $ref: '#/components/schemas/AddressResult'
+        cached:
+          type: boolean
+          description: True if result was served from cache
+    SearchResponse:
+      type: object
+      properties:
+        query:
+          type: string
+        count:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressResult'
+        cached:
+          type: boolean
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

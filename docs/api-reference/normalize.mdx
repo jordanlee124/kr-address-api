@@ -1,0 +1,95 @@
+---
+title: Normalize Address
+api: GET /normalize
+description: Returns the best-matching structured address for a Korean address string
+---
+
+<ParamField query="q" type="string" required>
+  Korean address string. Minimum 3 characters. Can be a full address, partial address, or building name + road combination.
+  
+  **Examples:** `서울특별시 강남구 테헤란로 427` · `강남구 테헤란로 427` · `판교역로 166`
+</ParamField>
+
+<ResponseField name="query" type="string">
+  The original query string.
+</ResponseField>
+
+<ResponseField name="result" type="object">
+  <Expandable title="AddressResult">
+    <ResponseField name="roadAddress" type="string">
+      Full road address (도로명주소) — the official format since 2014.
+    </ResponseField>
+    <ResponseField name="jibunAddress" type="string">
+      Land lot address (지번주소) — the legacy format, still widely used.
+    </ResponseField>
+    <ResponseField name="englishAddress" type="string">
+      Official English romanization from the Korean government Juso database.
+    </ResponseField>
+    <ResponseField name="postalCode" type="string">
+      5-digit postal code.
+    </ResponseField>
+    <ResponseField name="components" type="object">
+      <Expandable title="Components">
+        <ResponseField name="city" type="string">Korean city/province (시/도)</ResponseField>
+        <ResponseField name="cityEnglish" type="string">English city/province name</ResponseField>
+        <ResponseField name="district" type="string">District (구/군)</ResponseField>
+        <ResponseField name="neighbourhood" type="string">Neighbourhood (동/읍/면)</ResponseField>
+        <ResponseField name="roadName" type="string">Road name</ResponseField>
+        <ResponseField name="buildingNumber" type="string">Building number</ResponseField>
+        <ResponseField name="buildingName" type="string | null">Building name, or null</ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="cached" type="boolean">
+  `true` if the result was served from cache. Normalized addresses are cached for 24 hours.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl "https://kr-address-api.jordanlee124.workers.dev/v1/normalize?q=%EC%84%9C%EC%9A%B8+%EA%B0%95%EB%82%A8%EA%B5%AC+%ED%85%8C%ED%97%A4%EB%9E%80%EB%A1%9C+427" \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+```javascript JavaScript
+const r = await fetch(
+  'https://kr-address-api.jordanlee124.workers.dev/v1/normalize?q=' +
+  encodeURIComponent('서울 강남구 테헤란로 427'),
+  { headers: { 'X-API-Key': 'YOUR_API_KEY' } }
+)
+const data = await r.json()
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "query": "서울 강남구 테헤란로 427",
+  "result": {
+    "roadAddress": "서울특별시 강남구 테헤란로 427 (삼성동)",
+    "jibunAddress": "서울특별시 강남구 삼성동 143-40 위워크타워",
+    "englishAddress": "427 Teheran-ro, Gangnam-gu, Seoul",
+    "postalCode": "06159",
+    "components": {
+      "city": "서울특별시",
+      "cityEnglish": "Seoul",
+      "district": "강남구",
+      "neighbourhood": "삼성동",
+      "roadName": "테헤란로",
+      "buildingNumber": "427",
+      "buildingName": "위워크타워"
+    }
+  },
+  "cached": false
+}
+```
+
+```json 400
+{ "error": "q must be at least 3 characters." }
+```
+
+```json 404
+{ "error": "Address not found." }
+```
+</ResponseExample>

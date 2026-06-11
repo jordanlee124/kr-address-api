@@ -1,0 +1,122 @@
+---
+title: Quickstart
+description: Make your first API call in under 2 minutes
+---
+
+## 1. Get an API key
+
+[Sign up for a free API key](https://buy.polar.sh/jordanlee124) — the free tier includes 200 calls/day with no credit card required.
+
+## 2. Make your first request
+
+<CodeGroup>
+
+```bash cURL
+curl "https://kr-address-api.jordanlee124.workers.dev/v1/normalize?q=%EC%84%9C%EC%9A%B8+%EA%B0%95%EB%82%A8%EA%B5%AC+%ED%85%8C%ED%97%A4%EB%9E%80%EB%A1%9C+427" \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://kr-address-api.jordanlee124.workers.dev/v1/normalize?q=' +
+  encodeURIComponent('서울 강남구 테헤란로 427'),
+  { headers: { 'X-API-Key': 'YOUR_API_KEY' } }
+)
+const data = await response.json()
+console.log(data.result.englishAddress) // "427 Teheran-ro, Gangnam-gu, Seoul"
+```
+
+```python Python
+import requests, urllib.parse
+
+q = urllib.parse.quote('서울 강남구 테헤란로 427')
+r = requests.get(
+    f'https://kr-address-api.jordanlee124.workers.dev/v1/normalize?q={q}',
+    headers={'X-API-Key': 'YOUR_API_KEY'}
+)
+data = r.json()
+print(data['result']['englishAddress'])  # "427 Teheran-ro, Gangnam-gu, Seoul"
+```
+
+</CodeGroup>
+
+**Response:**
+
+```json
+{
+  "query": "서울 강남구 테헤란로 427",
+  "result": {
+    "roadAddress": "서울특별시 강남구 테헤란로 427 (삼성동)",
+    "jibunAddress": "서울특별시 강남구 삼성동 143-40 위워크타워",
+    "englishAddress": "427 Teheran-ro, Gangnam-gu, Seoul",
+    "postalCode": "06159",
+    "components": {
+      "city": "서울특별시",
+      "cityEnglish": "Seoul",
+      "district": "강남구",
+      "neighbourhood": "삼성동",
+      "roadName": "테헤란로",
+      "buildingNumber": "427",
+      "buildingName": "위워크타워"
+    }
+  },
+  "cached": false
+}
+```
+
+## Search for multiple results
+
+Use `/search` when you want to show the user a list of matching addresses (e.g. an address autocomplete field):
+
+<CodeGroup>
+
+```bash cURL
+curl "https://kr-address-api.jordanlee124.workers.dev/v1/search?q=%EA%B0%95%EB%82%A8%EA%B5%AC+%ED%85%8C%ED%97%A4%EB%9E%80%EB%A1%9C&limit=3" \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+```javascript JavaScript
+const response = await fetch(
+  'https://kr-address-api.jordanlee124.workers.dev/v1/search?q=' +
+  encodeURIComponent('강남구 테헤란로') + '&limit=3',
+  { headers: { 'X-API-Key': 'YOUR_API_KEY' } }
+)
+const { results } = await response.json()
+results.forEach(r => console.log(r.englishAddress))
+```
+
+```python Python
+import requests, urllib.parse
+
+q = urllib.parse.quote('강남구 테헤란로')
+r = requests.get(
+    f'https://kr-address-api.jordanlee124.workers.dev/v1/search?q={q}&limit=3',
+    headers={'X-API-Key': 'YOUR_API_KEY'}
+)
+for addr in r.json()['results']:
+    print(addr['englishAddress'])
+```
+
+</CodeGroup>
+
+## Error handling
+
+| Status | Meaning |
+|--------|---------|
+| `400` | `q` parameter missing or under 3 characters |
+| `401` | Missing or invalid API key |
+| `404` | No address found for your query (normalize only) |
+| `429` | Daily rate limit exceeded — check `X-RateLimit-Reset` header |
+
+```javascript
+const response = await fetch(url, { headers: { 'X-API-Key': key } })
+
+if (response.status === 429) {
+  const reset = response.headers.get('X-RateLimit-Reset')
+  console.log(`Rate limited. Resets at ${new Date(reset * 1000)}`)
+}
+if (!response.ok) {
+  const { error } = await response.json()
+  throw new Error(error)
+}
+```
