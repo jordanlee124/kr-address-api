@@ -43,9 +43,11 @@
   },
   "api": {
     "baseUrl": "https://kr-address-api.jordanlee124.workers.dev/v1",
-    "auth": {
-      "method": "key",
-      "name": "X-API-Key"
+    "mdx": {
+      "auth": {
+        "method": "key",
+        "name": "X-API-Key"
+      }
     }
   },
   "footerSocials": {
