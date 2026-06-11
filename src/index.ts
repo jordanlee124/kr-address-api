@@ -33,7 +33,7 @@ app.post('/webhooks/polar', async (c) => {
   const encoder = new TextEncoder()
   const key = await crypto.subtle.importKey(
     'raw',
-    encoder.encode(c.env.POLAR_WEBHOOK_SECRET),
+    encoder.encode(c.env.POLAR_WEBHOOK_SECRET.trim()),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['verify']
