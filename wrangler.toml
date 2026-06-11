@@ -7,16 +7,16 @@ ENVIRONMENT = "production"
 
 [[kv_namespaces]]
 binding = "CACHE_KV"
-id = "YOUR_CACHE_KV_ID"
+id = "bf163750e32643289fecdbe2e455a968"
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "YOUR_RATE_LIMIT_KV_ID"
+id = "caa59a24884a4ff2bcbca0abfcd9d00c"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "kr-address-api"
-database_id = "YOUR_D1_DATABASE_ID"
+database_id = "65733d78-ea48-4004-aff1-effc72f6e7e3"
 
 # Secrets (set via wrangler secret put):
 # JUSO_CONFIRM_KEY
