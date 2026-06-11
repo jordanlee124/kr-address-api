@@ -21,16 +21,17 @@ export async function searchJuso(
   count = 5
 ): Promise<JusoRaw[]> {
   const params = new URLSearchParams({
-    confmKey,
     currentPage: '1',
     countPerPage: String(count),
     keyword,
     resultType: 'json',
   })
 
-  const res = await fetch(
-    `https://business.juso.go.kr/addrlink/addrLinkApi.do?${params}`
-  )
+  // confmKey is base64 and contains '=' which URLSearchParams encodes to '%3D'.
+  // The Juso API does not decode it, so we prepend the key raw.
+  const url = `https://business.juso.go.kr/addrlink/addrLinkApi.do?confmKey=${confmKey.trim()}&${params}`
+
+  const res = await fetch(url)
   if (!res.ok) return []
 
   const json = await res.json() as { results?: { common?: { errorCode?: string }; juso?: JusoRaw[] } }
