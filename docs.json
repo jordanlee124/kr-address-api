@@ -41,14 +41,9 @@
       }
     ]
   },
+  "openapi": "openapi.yaml",
   "api": {
-    "baseUrl": "https://kr-address-api.jordanlee124.workers.dev",
-    "mdx": {
-      "auth": {
-        "method": "key",
-        "name": "X-API-Key"
-      }
-    }
+    "baseUrl": "https://kr-address-api.jordanlee124.workers.dev"
   },
   "footerSocials": {
     "github": "https://github.com/jordanlee124/kr-address-api"
