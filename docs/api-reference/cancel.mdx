@@ -1,0 +1,55 @@
+---
+title: Cancel Subscription
+api: POST /cancel
+description: Cancel your paid subscription
+---
+
+Cancel your active Polar subscription. Your current plan remains active until the end of the billing period — access is not revoked immediately.
+
+If you are on the free plan or have no active subscription, this endpoint returns a 400 error.
+
+<ResponseField name="message" type="string">
+  Confirmation that the cancellation was submitted.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X POST https://kr-address-api.jordanlee124.workers.dev/cancel \
+  -H "X-API-Key: your_api_key"
+```
+
+```javascript JavaScript
+const res = await fetch('https://kr-address-api.jordanlee124.workers.dev/cancel', {
+  method: 'POST',
+  headers: { 'X-API-Key': 'your_api_key' },
+})
+const data = await res.json()
+console.log(data.message)
+```
+
+```python Python
+import requests
+
+r = requests.post(
+    'https://kr-address-api.jordanlee124.workers.dev/cancel',
+    headers={'X-API-Key': 'your_api_key'},
+)
+print(r.json()['message'])
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "Subscription cancelled. Your current plan remains active until the end of the billing period."
+}
+```
+
+```json 400
+{ "error": "No active paid subscription found." }
+```
+
+```json 401
+{ "error": "Missing API key." }
+```
+</ResponseExample>

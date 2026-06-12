@@ -127,6 +127,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cancel:
+    post:
+      operationId: cancelSubscription
+      summary: Cancel subscription
+      description: Cancels your active Polar subscription. Access continues until the end of the current billing period.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Cancellation submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: Subscription cancelled. Your current plan remains active until the end of the billing period.
+        '400':
+          description: No active paid subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '502':
+          description: Failed to reach Polar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     ApiKeyAuth:
