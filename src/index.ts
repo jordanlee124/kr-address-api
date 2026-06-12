@@ -5,11 +5,13 @@ import { rateLimitMiddleware } from './middleware/rateLimit'
 import { normalizeHandler } from './handlers/normalize'
 import { searchHandler } from './handlers/search'
 import { signupHandler } from './handlers/signup'
+import { cancelHandler } from './handlers/cancel'
 import { insertApiKey } from './middleware/auth'
 
 export type Env = {
   JUSO_CONFIRM_KEY: string
   POLAR_WEBHOOK_SECRET: string
+  POLAR_API_KEY: string
   DB: D1Database
   CACHE_KV: KVNamespace
   RATE_LIMIT_KV: KVNamespace
@@ -24,6 +26,8 @@ app.use('/v1/*', rateLimitMiddleware)
 app.get('/v1/normalize', normalizeHandler)
 app.get('/v1/search', searchHandler)
 app.post('/signup', signupHandler)
+app.use('/cancel', authMiddleware)
+app.post('/cancel', cancelHandler)
 app.get('/health', (c) => c.json({ status: 'ok', timestamp: new Date().toISOString() }))
 
 app.post('/webhooks/polar', async (c) => {

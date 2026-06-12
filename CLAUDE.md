@@ -6,6 +6,7 @@ A REST API that normalizes Korean address strings into structured data in both K
 
 - `GET /v1/normalize?q={address}` — best match, structured Korean + English
 - `GET /v1/search?q={query}&limit=5` — multiple results
+- `POST /cancel` — cancel paid subscription (auth required, no rate limit consumed)
 - `GET /health` — health check
 
 **Target:** <80ms cached · <1s uncached
@@ -50,6 +51,7 @@ kr-address-api/
 Set via `wrangler secret put`:
 - `JUSO_CONFIRM_KEY` — from [business.juso.go.kr](https://business.juso.go.kr) → 도로명주소 개발자센터 → API 신청 (instant approval)
 - `POLAR_WEBHOOK_SECRET` — from Polar dashboard → Settings → Webhooks
+- `POLAR_API_KEY` — from Polar dashboard → Settings → API Keys (needed for `POST /cancel`)
 
 KV / D1 IDs go in `wrangler.toml` (not secrets):
 - `CACHE_KV` — `wrangler kv:namespace create "CACHE_KV"`
@@ -223,6 +225,7 @@ wrangler d1 execute kr-address-api --file=./schema.sql
 # Secrets
 wrangler secret put JUSO_CONFIRM_KEY
 wrangler secret put POLAR_WEBHOOK_SECRET
+wrangler secret put POLAR_API_KEY
 
 # Deploy
 npx wrangler deploy
@@ -254,6 +257,7 @@ curl "$WORKER/v1/normalize?q=경복궁"    # (no key) -> 401
 
 - [ ] `JUSO_CONFIRM_KEY` secret set
 - [ ] `POLAR_WEBHOOK_SECRET` secret set
+- [ ] `POLAR_API_KEY` secret set
 - [ ] D1 schema deployed and plans seeded ($19/$49/$149 price points)
 - [ ] `CACHE_KV` and `RATE_LIMIT_KV` IDs in wrangler.toml
 - [ ] Free-tier test key inserted into D1
